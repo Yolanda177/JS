@@ -39,7 +39,7 @@ var ulObj=inner.children[0];
 var list=ulObj.children;
 var olObj=inner.children[1];
 var arr=getId("arr");
-var imgWidth=inner.offsetWidth; //返回padding+border+width之和
+var imgWidth=inner.offsetWidth; // 返回padding+border+width之和
 var right=getId("right");
 var pic=0;
 
@@ -69,28 +69,28 @@ for (var i = 0; i < list.length; i++) {
 
 
 // 设置ol中第一个li有背景颜色
-olObj.children[0].className = "current"; //也就是打开页面时第一个圆按钮高显
+olObj.children[0].className = "current"; // 也就是打开页面时第一个圆按钮高显
 // 克隆一个ul中第一个li,加入到ul中的最后
    // cloneNode()方法创建节点的拷贝并返回该副本
-ulObj.appendChild(ulObj.children[0].cloneNode(true)); // 如果不克隆，自动轮播到第四张图就出错
+ulObj.appendChild(ulObj.children[0].cloneNode(true)); 
 
-   //setInterval()会不停的调用函数，知道clearInterval()被调用或窗口被关闭，setInterval返回的id值可用作clearInterval的参数
+   // setInterval()会不停的调用函数，直到clearInterval()被调用或窗口被关闭
 var timeId = setInterval(onmouseclickHandle, 5000); // 5000控制每张图停留时间
-// 左右焦点实现点击切换图片功能
+// 左右箭头实现点击切换图片功能
 box.onmouseover = function() { 
-    arr.style.display="block"; //显示左右箭头
-    clearInterval(timeId); //鼠标停留在box区域就暂停自动轮播
+    arr.style.display="block"; // 显示左右箭头
+    clearInterval(timeId); // 鼠标停留在box区域就暂停自动轮播
 };
 box.onmouseout = function() { 
-    arr.style.display = "none"; //隐藏左右箭头
-    timeId = setInterval(onmouseclickHandle, 5000);  //鼠标离开就是启动自动轮播
+    arr.style.display = "none"; // 隐藏左右箭头
+    timeId = setInterval(onmouseclickHandle, 5000);  // 鼠标离开就是启动自动轮播
 };
 
 right.onclick = onmouseclickHandle;
 function onmouseclickHandle() {
     if (pic == list.length - 1) {
-        //如何从第5个图,跳转到第一个图
-        pic = 0;//先设置pic=0
+        // 如何从第5个图,跳转到第一个图
+        pic = 0;// 先设置pic=0
         ulObj.style.left = 0 + "px";// 把ul的位置还原成开始的默认位置
     }
     pic++;// 立刻设置pic加1,那么此时用户就会看到第二个图片了
@@ -111,7 +111,7 @@ function onmouseclickHandle() {
 left.onclick = function() {
     if (pic == 0){
         pic = list.length-1;
-        ulObj.style.left = -pic*imgWidth + "px"; // 定义元素的左边到最近一个具有定位设置父元素的左部边缘的位置
+        ulObj.style.left = -pic*imgWidth + "px"; 
     }
     pic--;
     animate(ulObj,-pic * imgWidth);
