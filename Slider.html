@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Slider</title>
+    
+    <link href="Slider.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <!-- 轮播图-->
+    <div class="box" id="box"">
+        <div class="inner">
+            <ul>
+                <li><a href="#"><img src="https://www.12306.cn/index/images/pic/banner09.jpg" alt="" ></a></li>
+                <li><a href="#"><img src="https://www.12306.cn/index/images/pic/banner08.jpg" alt="" ></a></li>
+                <li><a href="#"><img src="https://www.12306.cn/index/images/pic/banner10.jpg" alt="" ></a></li>
+                <li><a href="#"><img src="https://www.12306.cn/index/images/pic/banner11.jpg" alt="" ></a></li>
+                <li><a href="#"><img src="https://www.12306.cn/index/images/pic/banner12.jpg" alt="" ></a></li>
+            </ul>
+            <!-- 小圆点-->
+            <ol class="bar"></ol>
+            <!-- 左右按钮-->
+            <div id="arr">
+                <span id="left"> < </span>
+                <span id="right"> > </span>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+function getId(id) {
+    return document.getElementById(id);
+}
+
+// 获取各元素
+var box=getId("box");
+var inner=box.children[0];
+var ulObj=inner.children[0];
+var list=ulObj.children;
+var olObj=inner.children[1];
+var arr=getId("arr");
+var imgWidth=inner.offsetWidth; //返回padding+border+width之和
+var right=getId("right");
+var pic=0;
+
+// 根据li个数，创建小按钮
+
+for (var i = 0; i < list.length; i++) {
+    var liObj = document.createElement("li"); // 创建li节点
+
+    olObj.appendChild(liObj); // li节点追加到ol节点
+    liObj.innerText = (i+1); // 如果改成innerHTML 似乎没有影响
+    liObj.setAttribute("index", i); // 创建或改变某个新属性，参数：属性名，属性值
+
+    // 为按钮注册mouseover事件
+    liObj.onmouseover = function () {
+
+        // 先清除所有按钮的样式
+        for (var j = 0; j < olObj.children.length; j++){
+            olObj.children[j].removeAttribute("class");
+        }
+        this.className = "current"; // 设置当前olObj的class属性为current
+        pic = this.getAttribute("index"); // 返回指定属性名的属性值给pic，就是index的值
+        animate(ulObj,-pic*imgWidth); //
+    }
+
+}
+ 
+
+
+// 设置ol中第一个li有背景颜色
+olObj.children[0].className = "current"; //也就是打开页面时第一个圆按钮高显
+// 克隆一个ul中第一个li,加入到ul中的最后
+   // cloneNode()方法创建节点的拷贝并返回该副本
+ulObj.appendChild(ulObj.children[0].cloneNode(true)); // 如果不克隆，自动轮播到第四张图就出错
+
+   //setInterval()会不停的调用函数，知道clearInterval()被调用或窗口被关闭，setInterval返回的id值可用作clearInterval的参数
+var timeId = setInterval(onmouseclickHandle, 5000); // 5000控制每张图停留时间
+// 左右焦点实现点击切换图片功能
+box.onmouseover = function() { 
+    arr.style.display="block"; //显示左右箭头
+    clearInterval(timeId); //鼠标停留在box区域就暂停自动轮播
+};
+box.onmouseout = function() { 
+    arr.style.display = "none"; //隐藏左右箭头
+    timeId = setInterval(onmouseclickHandle, 5000);  //鼠标离开就是启动自动轮播
+};
+
+right.onclick = onmouseclickHandle;
+function onmouseclickHandle() {
+    if (pic == list.length - 1) {
+        //如何从第5个图,跳转到第一个图
+        pic = 0;//先设置pic=0
+        ulObj.style.left = 0 + "px";// 把ul的位置还原成开始的默认位置
+    }
+    pic++;// 立刻设置pic加1,那么此时用户就会看到第二个图片了
+    animate(ulObj, -pic * imgWidth);// pic从0的值加1之后,pic的值是1,然后ul移动出去一个图片
+    if (pic == list.length - 1) {
+        // 第五个按钮颜色清除
+        olObj.children[olObj.children.length - 1].className = "";
+        // 第一个按钮颜色设置上
+        olObj.children[0].className = "current";
+    } else {
+        //清除所有的小按钮的背景颜色
+        for (var i = 0; i < olObj.children.length; i++) {
+            olObj.children[i].removeAttribute("class");
+        }
+        olObj.children[pic].className = "current";
+    }
+}
+left.onclick = function() {
+    if (pic == 0){
+        pic = list.length-1;
+        ulObj.style.left = -pic*imgWidth + "px"; // 定义元素的左边到最近一个具有定位设置父元素的左部边缘的位置
+    }
+    pic--;
+    animate(ulObj,-pic * imgWidth);
+    for (var i = 0; i < olObj.children.length; i++) {
+        olObj.children[i].removeAttribute("class");
+    }
+    // 当前的pic索引对应的按钮设置颜色
+    olObj.children[pic].className = "current";
+};
+
+// 设置任意的一个元素,移动到指定的目标位置
+function animate(element, target) {
+    clearInterval(element.timeId);
+    // 定时器的id值存储到对象的一个属性中
+    element.timeId = setInterval(function () {
+        // 获取元素的当前的位置,数字类型
+        var current = element.offsetLeft;
+        // 每次移动的距离
+        var step = 10;
+        step = current < target ? step : -step;
+        // 当前移动到位置
+        current += step;
+        if (Math.abs(current - target) > Math.abs(step)) {
+            element.style.left = current + "px";
+        } else {
+            // 清理定时器
+            clearInterval(element.timeId);
+            // 直接到达目标
+            element.style.left = target + "px";
+        }
+    }, 0.5); //0.5控制移动快慢
+   
+}
+    </script>
+</body>
+</html>
+
+
+
+
+
+      
